@@ -10,6 +10,11 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+    //有时候,我们的代码使用utf-8 保存的,但是,进行gradle build 的环境是gbk这类的,这时候会报如下错误:
+    //编码GBK的不可映射字符.这个时候我们就需要手动的设置编译时编码类型.
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
 }
 
 allprojects {
