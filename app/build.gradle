@@ -33,14 +33,72 @@ android {
         versionName "1.0"
     }
 
+    // 签名相关
+    signingConfigs{
+        debug {
+            // debug与release采用相同的签名配置
+            // 应用签名的配置信息存放到properties文件中
+            def propFile = file('keystore.properties')
+            def Properties p = new Properties()
+            p.load(new FileInputStream(propFile))
+            if( p!=null
+                    &&  p.containsKey('storeFile')
+                    &&  p.containsKey('storePassword')
+                    &&  p.containsKey('keyAlias')
+                    &&  p.containsKey('keyPassword'))
+            {
+                storeFile file( p['storeFile'] )
+                storePassword p['storePassword']
+                keyAlias p['keyAlias']
+                keyPassword p['keyPassword']
+
+            }
+        }
+
+        release {
+            // 应用签名的配置信息存放到properties文件中
+            def propFile = file('keystore.properties')
+            def Properties p = new Properties()
+            p.load(new FileInputStream(propFile))
+            if( p!=null
+                    &&  p.containsKey('storeFile')
+                    &&  p.containsKey('storePassword')
+                    &&  p.containsKey('keyAlias')
+                    &&  p.containsKey('keyPassword'))
+            {
+                storeFile file( p['storeFile'] )
+                storePassword p['storePassword']
+                keyAlias p['keyAlias']
+                keyPassword p['keyPassword']
+
+            }
+        }
+    }
+
     buildTypes {
         debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
             // 为了不和 release 版本冲突
             applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
         }
         release {
-            minifyEnabled false
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            // 是否进行混淆
+            minifyEnabled true
+            // 是否zip对齐
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            // 混淆文件的位置
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
